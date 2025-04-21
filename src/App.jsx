@@ -32,7 +32,8 @@ function App() {
 
   useEffect(() => {
     const movies = localStorage.getItem("wlMovies");
-    setWatchlist(JSON.parse(movies));
+    const parsedMovies = movies ? JSON.parse(movies) : [];
+    setWatchlist(parsedMovies);
   }, []);
 
   return (

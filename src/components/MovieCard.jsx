@@ -11,7 +11,7 @@ function MovieCard({
 
   function doesContain() {
     for (let i = 0; i < watchlist.length; i++) {
-      if (watchlist[i].id === movieObj.id) {
+      if (watchlist[i].id === movieObj?.id) {
         return true;
       }
     }
@@ -19,9 +19,8 @@ function MovieCard({
   }
 
   function handleClick() {
-    navigate(`/info/${movieObj.id}`);
+    navigate(`/info/${movieObj?.id}`);
   }
-
 
   function handleWatchlistClick(e, action) {
     e.stopPropagation();
@@ -32,8 +31,8 @@ function MovieCard({
     <div
       className="relative h-[400px] w-full bg-cover bg-center rounded-xl shadow-lg overflow-hidden transform transition-all duration-300 hover:scale-105 hover:shadow-xl cursor-pointer group"
       style={{
-        backgroundImage: movieObj.poster_path
-          ? `url(https://image.tmdb.org/t/p/w500/${movieObj.poster_path})`
+        backgroundImage: movieObj?.poster_path
+          ? `url(https://image.tmdb.org/t/p/w500/${movieObj?.poster_path})`
           : "linear-gradient(to bottom, #3490dc, #6574cd)",
       }}
       onClick={handleClick}
@@ -58,28 +57,27 @@ function MovieCard({
         </div>
       )}
 
-    {/* Rating badge */}
-    <div className="absolute top-3 left-3 px-3 py-1 rounded-full bg-gray-900/80 text-white font-medium shadow-lg flex items-center gap-1">
-  {movieObj.vote_average > 0 ? (
-    <>
-      <span className="text-yellow-400">⭐</span>
-      <span>{movieObj.vote_average.toFixed(1)}</span>
-    </>
-  ) : !movieObj.release_date || new Date(movieObj.release_date) > new Date() ? (
-    <span className="text-blue-400">Upcoming</span>
-  ) : (
-    <span className="text-gray-400">No Rating</span>
-  )}
-</div>
-
+      {/* Rating badge */}
+      <div className="absolute top-3 left-3 px-3 py-1 rounded-full bg-gray-900/80 text-white font-medium shadow-lg flex items-center gap-1">
+        {movieObj?.vote_average > 0 ? (
+          <>
+            <span className="text-yellow-400">⭐</span>
+            <span>{movieObj?.vote_average.toFixed(1)}</span>
+          </>
+        ) : !movieObj?.release_date || new Date(movieObj?.release_date) > new Date() ? (
+          <span className="text-blue-400">Upcoming</span>
+        ) : (
+          <span className="text-gray-400">No Rating</span>
+        )}
+      </div>
 
       {/* Movie info container at bottom */}
       <div className="absolute bottom-0 left-0 right-0 bg-gradient-to-t from-black to-transparent pt-8 pb-4 px-3">
         <h3 className="text-white font-medium text-center text-base sm:text-lg line-clamp-2 mb-1">
-          {movieObj.title}
+          {movieObj?.title}
         </h3>
         <p className="text-gray-300 text-xs text-center opacity-80">
-          {movieObj.release_date ? new Date(movieObj.release_date).getFullYear() : ""}
+          {movieObj?.release_date ? new Date(movieObj?.release_date).getFullYear() : ""}
         </p>
       </div>
     </div>

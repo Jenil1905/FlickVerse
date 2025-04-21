@@ -9,9 +9,10 @@ function Banner({ searchTerm, setSearchTerm, searchRef }) {
   const [isHovered, setIsHovered] = useState(false);
   const [imageLoaded, setImageLoaded] = useState(false);
   const intervalRef = useRef(null);
+  const isMounted = useRef(true);
 
   function handleSearch(e) {
-    if (e.key === 'Enter' && searchRef.current) {
+    if (e.key === 'Enter' && searchRef?.current) {
       searchRef.current.scrollIntoView({ behavior: 'smooth' });
     }
   }
@@ -27,12 +28,16 @@ function Banner({ searchTerm, setSearchTerm, searchRef }) {
   };
 
   const fetchMovie = async () => {
+    if (!isMounted.current) return;
+    
     try {
       const totalPages = 100;
       const randomPage = Math.floor(Math.random() * totalPages) + 1;
       const response = await axios.get(
         `https://api.themoviedb.org/3/movie/popular?api_key=58df7c40355d1c9e107a0447f2b81e4a&language=en-US&page=${randomPage}`
       );
+      
+      if (!isMounted.current) return;
       
       const movieList = response.data.results.filter(movie => movie.backdrop_path);
       
@@ -55,28 +60,43 @@ function Banner({ searchTerm, setSearchTerm, searchRef }) {
       // Preload the image
       try {
         await preloadImage(imageUrl);
-        setImageLoaded(true);
+        
+        if (!isMounted.current) return;
         
         if (isInitialLoad.current) {
           setMovieObj(selectedMovie);
+          setImageLoaded(true);
           isInitialLoad.current = false;
         } else {
+          // Start transition
           setIsTransitioning(true);
           setPrevMovieObj(movieObj);
           
+          // Wait for transition out, then update movie
           setTimeout(() => {
+            if (!isMounted.current) return;
             setMovieObj(selectedMovie);
-            setTimeout(() => setIsTransitioning(false), 300);
+            
+            // Wait a bit to ensure DOM updates, then show new image
+            setTimeout(() => {
+              if (!isMounted.current) return;
+              setImageLoaded(true);
+              setIsTransitioning(false);
+            }, 50);
           }, 300);
         }
       } catch (error) {
         console.error("Error preloading image:", error);
         // Try another movie if this one fails
-        fetchMovie();
+        if (isMounted.current) {
+          fetchMovie();
+        }
       }
     } catch (error) {
       console.error("Error fetching data:", error);
-      setIsTransitioning(false);
+      if (isMounted.current) {
+        setIsTransitioning(false);
+      }
     }
   };
 
@@ -86,20 +106,24 @@ function Banner({ searchTerm, setSearchTerm, searchRef }) {
     
     // Setup interval for periodic fetches
     intervalRef.current = setInterval(() => {
-      fetchMovie();
+      if (!isTransitioning) { // Prevent fetches while transitioning
+        setImageLoaded(false); // Reset loaded state before fetching
+        fetchMovie();
+      }
     }, 10000);
     
     // Clean up
     return () => {
+      isMounted.current = false;
       if (intervalRef.current) {
         clearInterval(intervalRef.current);
       }
     };
-  }, []);  // Remove movieObj from dependencies to prevent constant re-rendering
+  }, []); // Empty dependency array is correct here
 
   // Background style with fallback
   const getBackgroundStyle = (movie) => {
-    if (!movie || !movie.backdrop_path) {
+    if (!movie?.backdrop_path) {
       return { backgroundColor: "#1a1a1a" };
     }
     return {
@@ -126,9 +150,7 @@ function Banner({ searchTerm, setSearchTerm, searchRef }) {
       {/* Current movie backdrop */}
       {movieObj ? (
         <div
-          className={`absolute inset-0 transition-opacity duration-700 ease-in ${
-            isTransitioning || !imageLoaded ? 'opacity-0' : 'opacity-100'
-          }`}
+          className={`absolute inset-0 transition-opacity duration-700 ease-in ${isTransitioning || !imageLoaded ? 'opacity-0' : 'opacity-100'}`}
           style={getBackgroundStyle(movieObj)}
         ></div>
       ) : (
@@ -153,7 +175,7 @@ function Banner({ searchTerm, setSearchTerm, searchRef }) {
             type="text"
             placeholder="Search Movies"
             className="w-full h-12 md:h-14 px-4 text-lg text-black bg-white/90 backdrop-blur-sm border-2 border-gray-300 rounded-full shadow-xl outline-none transition-all duration-300 focus:border-blue-500 focus:ring-4 focus:ring-blue-300/30"
-            value={searchTerm}
+            value={searchTerm || ""}
             onChange={(e) => setSearchTerm(e.target.value)}
             onKeyDown={handleSearch}
             onFocus={() => setIsHovered(true)}

@@ -12,14 +12,14 @@ function Movies({ handleAddtoWatchlist, watchlist, handleRemoveFromWatchlist, se
   function nextPage() {
     setIsLoadingNewPage(true);
     setPageNo(pageNo + 1);
-    window.scrollTo({ top: searchRef.current.offsetTop, behavior: 'smooth' });
+    window.scrollTo({ top: searchRef?.current?.offsetTop, behavior: 'smooth' });
   }
 
   function prevPage() {
     if (pageNo > 1) {
       setIsLoadingNewPage(true);
       setPageNo(pageNo - 1);
-      window.scrollTo({ top: searchRef.current.offsetTop, behavior: 'smooth' });
+      window.scrollTo({ top: searchRef?.current?.offsetTop, behavior: 'smooth' });
     }
   }
 
@@ -29,14 +29,14 @@ function Movies({ handleAddtoWatchlist, watchlist, handleRemoveFromWatchlist, se
     
     setLoading(true);
     const fetchTimeout = setTimeout(() => {
-      if (searchTerm.length > 2) {
+      if (searchTerm?.length > 2) {
         axios
           .get(
             `https://api.themoviedb.org/3/search/movie?api_key=58df7c40355d1c9e107a0447f2b81e4a&query=${searchTerm}&language=en-US&page=1`,
             { signal }
           )
           .then((response) => {
-            setMovies(response.data.results);
+            setMovies(response.data?.results);
             setLoading(false);
             setIsLoadingNewPage(false);
           })
@@ -54,7 +54,7 @@ function Movies({ handleAddtoWatchlist, watchlist, handleRemoveFromWatchlist, se
             { signal }
           )
           .then((response) => {
-            setMovies(response.data.results);
+            setMovies(response.data?.results);
             setLoading(false);
             setIsLoadingNewPage(false);
           })
@@ -84,8 +84,6 @@ function Movies({ handleAddtoWatchlist, watchlist, handleRemoveFromWatchlist, se
         >
           {searchTerm?.length > 0 ? `Search Results for "${searchTerm}"` : "Browse Movies"}
         </h1>
-        
-        
       </div>
 
       {loading ? (
@@ -95,12 +93,12 @@ function Movies({ handleAddtoWatchlist, watchlist, handleRemoveFromWatchlist, se
         </div>
       ) : (
         <>
-          {movies.length > 0 ? (
+          {movies?.length > 0 ? (
             <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5 gap-6">
               {movies.map((movieObj, index) => {
                 return (
                   <div
-                    key={movieObj.id}
+                    key={movieObj?.id}
                     className="transform transition-all duration-500"
                     style={{
                       animationDelay: `${index * 0.05}s`,
@@ -130,7 +128,7 @@ function Movies({ handleAddtoWatchlist, watchlist, handleRemoveFromWatchlist, se
         </>
       )}
 
-      {!searchTerm.length && (
+      {!searchTerm?.length && (
         <div className="mt-12 transition-all duration-300 transform">
           <Page pageNumber={pageNo} nextPageFN={nextPage} prevPageFn={prevPage} />
         </div>
