@@ -82,7 +82,7 @@ function Movies({ handleAddtoWatchlist, watchlist, handleRemoveFromWatchlist, se
             isLoadingNewPage ? "translate-y-8 opacity-0" : "translate-y-0 opacity-100"
           }`}
         >
-          {searchTerm.length > 0 ? `Search Results for "${searchTerm}"` : "Browse Movies"}
+          {searchTerm?.length > 0 ? `Search Results for "${searchTerm}"` : "Browse Movies"}
         </h1>
         
         
