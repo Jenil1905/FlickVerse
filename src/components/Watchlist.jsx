@@ -63,7 +63,7 @@ function Watchlist({ watchlist, handleRemoveFromWatchlist }) {
       {/* Toggle WatchList */}
      {currGenre==="All Genre" ?(
        <div>
-       <button class="bg-blue-500 hover:bg-blue-600 text-white font-medium py-2 px-4 rounded-lg transition duration-300 hover:cursor-pointer">
+       <button class="bg-blue-500 m-7 hover:bg-blue-600 text-white font-medium py-2 px-4 rounded-lg transition duration-300 hover:cursor-pointer">
          TV Show
        </button>
      </div> 
